@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>PC Builder | FPV Nerd | Tech YouTuber</title>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            /* Base and Layout */
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            body {
+                font-family: "Orbitron", sans-serif;
+                background: radial-gradient(circle at top, #1a1a1d, #0d0d0f);
+                overflow-x: hidden;
+                overflow-y: auto;
+                color: #fff;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                position: relative;
+                min-height: 100vh;
+            }
+            .container {
+                position: relative;
+                z-index: 2;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 1.5rem;
+                max-width: 800px;
+                width: 95%;
+                padding: 1.5rem;
+                background: rgba(0, 0, 0, 0.7);
+                border: 2px solid #4ecca3;
+                border-radius: 1.5rem;
+                box-shadow: 0 0 15px rgba(78, 204, 163, 0.7);
+            }
+            .pane {
+                flex: 1 1 200px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            .pane.profile {
+                border-right: 1px solid rgba(78, 204, 163, 0.5);
+                padding-right: 1rem;
+            }
+            .pane.misc {
+                padding-left: 1rem;
+            }
+
+            /* Avatar Flip */
+            .avatar-container {
+                width: 100px;
+                height: 100px;
+                perspective: 600px;
+                margin-bottom: 1rem;
+            }
+            .avatar-inner {
+                width: 100%;
+                height: 100%;
+                position: relative;
+                transform-style: preserve-3d;
+                transition: transform 0.5s;
+            }
+            .avatar-container:hover .avatar-inner,
+            .avatar-container.flipped .avatar-inner {
+                transform: rotateY(180deg);
+            }
+            .avatar-front,
+            .avatar-back {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                backface-visibility: hidden;
+                border-radius: 50%;
+                border: 2px solid #4ecca3;
+                overflow: hidden;
+            }
+            .avatar-front img,
+            .avatar-back img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            .avatar-back {
+                transform: rotateY(180deg);
+            }
+
+            /* Text & Links */
+            h1 {
+                font-size: 1.1rem;
+                text-transform: uppercase;
+                letter-spacing: 1.5px;
+                margin-bottom: 1rem;
+            }
+            .description {
+                margin-bottom: 1rem;
+                font-size: 0.9rem;
+                opacity: 0.8;
+            }
+            .links {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+                width: 100%;
+            }
+            .links a {
+                padding: 0.5rem;
+                font-size: 0.9rem;
+                color: #1a1a1d;
+                background: #4ecca3;
+                border-radius: 1.2rem;
+                text-decoration: none;
+                transition:
+                    transform 0.2s,
+                    box-shadow 0.2s;
+                box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.2);
+            }
+            .links a:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(78, 204, 163, 0.5);
+            }
+            .footer {
+                width: 100%;
+                text-align: center;
+                margin-top: 1rem;
+                font-size: 0.7rem;
+                opacity: 0.7;
+            }
+
+            /* Moon & Waves */
+            .moon {
+                position: absolute;
+                top: 5%;
+                right: 5%;
+                width: 80px;
+                height: 80px;
+                background: radial-gradient(
+                    circle at 30% 30%,
+                    #f0eacd,
+                    #c9bf98
+                );
+                border-radius: 50%;
+                box-shadow: 0 0 20px rgba(240, 234, 205, 0.5);
+                z-index: 1;
+            }
+            .waves {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: 20%;
+                overflow: hidden;
+                z-index: 0;
+            }
+            .wave {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 200%;
+                height: 100%;
+                background-repeat: repeat-x;
+                background-position: 0 bottom;
+                will-change: transform;
+            }
+            .wave1 {
+                background-image: url("data:image/svg+xml;utf8,<svg width='1200' height='80' viewBox='0 0 1200 80'><path fill='%2300aaff' fill-opacity='0.5' d='M0,40 C100,20 200,60 300,40 C400,20 500,60 600,40 C700,20 800,60 900,40 C1000,20 1100,60 1200,40 L1200,80 L0,80 Z'/></svg>");
+                animation: wave1 5s linear infinite;
+                z-index: 1;
+            }
+            .wave2 {
+                background-image: url("data:image/svg+xml;utf8,<svg width='1200' height='80' viewBox='0 0 1200 80'><path fill='%230066cc' fill-opacity='0.6' d='M0,50 C100,30 200,70 300,50 C400,30 500,70 600,50 C700,30 800,70 900,50 C1000,30 1100,70 1200,50 L1200,80 L0,80 Z'/></svg>");
+                animation: wave2 8s linear infinite reverse;
+                z-index: 2;
+                opacity: 0.8;
+            }
+            @keyframes wave1 {
+                0% {
+                    transform: translateX(0);
+                }
+                100% {
+                    transform: translateX(-50%);
+                }
+            }
+            @keyframes wave2 {
+                0% {
+                    transform: translateX(0);
+                }
+                100% {
+                    transform: translateX(-50%);
+                }
+            }
+
+            /* Stars */
+            .stars {
+                position: absolute;
+                inset: 0;
+                pointer-events: none;
+                z-index: 0;
+            }
+            .star {
+                position: absolute;
+                width: 2px;
+                height: 2px;
+                background: #fff;
+                border-radius: 50%;
+                opacity: 0.8;
+                animation: twinkle 3s infinite ease-in-out;
+            }
+            @keyframes twinkle {
+                0%,
+                100% {
+                    opacity: 0.2;
+                }
+                50% {
+                    opacity: 1;
+                }
+            }
+            .shooting {
+                position: absolute;
+                width: 2px;
+                height: 2px;
+                background: linear-gradient(
+                    45deg,
+                    #fff,
+                    rgba(255, 255, 255, 0)
+                );
+                opacity: 0;
+                transform: rotate(45deg);
+                animation: shoot 1s linear infinite;
+            }
+            @keyframes shoot {
+                0% {
+                    opacity: 1;
+                    transform: translate(0, 0) rotate(45deg);
+                }
+                100% {
+                    opacity: 0;
+                    transform: translate(200px, 200px) rotate(45deg);
+                }
+            }
+
+            /* Responsive */
+            @media (max-width: 600px) {
+                .container {
+                    flex-direction: column;
+                    padding: 1rem;
+                }
+                .pane.profile {
+                    border-right: none;
+                    border-bottom: 1px solid rgba(78, 204, 163, 0.5);
+                    padding-right: 0;
+                    padding-bottom: 1rem;
+                }
+                .pane.misc {
+                    padding-left: 0;
+                    padding-top: 1rem;
+                }
+                .avatar-container {
+                    width: 80px;
+                    height: 80px;
+                }
+                h1 {
+                    font-size: 1rem;
+                }
+                .links a {
+                    font-size: 0.85rem;
+                    padding: 0.4rem;
+                }
+                .moon {
+                    display: none;
+                }
+                .waves {
+                    height: 25%;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="stars"></div>
+        <div class="moon"></div>
+        <div class="waves">
+            <div class="wave wave1"></div>
+            <div class="wave wave2"></div>
+        </div>
+        <div class="container">
+            <div class="pane profile">
+                <div class="avatar-container" id="avatarContainer">
+                    <div class="avatar-inner">
+                        <div class="avatar-front">
+                            <img src="iconic.png" alt="Avatar" />
+                        </div>
+                        <div class="avatar-back">
+                            <img src="qr.png" alt="QR Code" />
+                        </div>
+                    </div>
+                </div>
+                <h1>PC Builder<br />FPV Nerd<br />Tech YouTuber</h1>
+                <p class="description">
+                    Building rigs and flying drones—benchmarks & high-speed FPV
+                    adventures!
+                </p>
+                <div class="links">
+                    <a href="https://youtube.com/@peme969" target="_blank"
+                        >YouTube Channel</a
+                    >
+                    <a href="https://youtube.com/@roughfpv999" target="_blank"
+                        >2nd YouTube Channel</a
+                    >
+                    <a href="https://peme969.dev" target="_blank">My Website</a>
+                    <a href="https://github.com/peme969" target="_blank"
+                        >🐙 GitHub</a
+                    >
+                </div>
+            </div>
+            <div class="pane misc">
+                <h1>More Links</h1>
+                <div class="links">
+                    <a href="#" target="_blank" style="font-style: italic"
+                        >Coming Soon...</a
+                    >
+                </div>
+            </div>
+            <div class="footer">Vibe: Neon Grid • Built by Peme969</div>
+        </div>
+        <script>
+            // Generate 36 stars
+            const starContainer = document.querySelector(".stars");
+            for (let i = 0; i < 34; i++) {
+                const star = document.createElement("div");
+                star.className = "star";
+                star.style.top = Math.random() * 100 + "%";
+                star.style.left = Math.random() * 100 + "%";
+                starContainer.appendChild(star);
+            }
+            // Shooting stars every 2s
+            function createShooting() {
+                const s = document.createElement("div");
+                s.className = "shooting";
+                s.style.top = Math.random() * 50 + "%";
+                s.style.left = Math.random() * 50 + "%";
+                document.body.appendChild(s);
+                setTimeout(() => s.remove(), 1000);
+            }
+            setInterval(createShooting, 2000);
+            // Mobile flip
+            document
+                .getElementById("avatarContainer")
+                .addEventListener("click", function () {
+                    this.classList.toggle("flipped");
+                });
+        </script>
+    </body>
+</html>
